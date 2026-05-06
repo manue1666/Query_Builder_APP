@@ -20,7 +20,16 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use((response) => {
-    return response.data;
+    // Si response.data ya tiene la estructura { success, message, data }, devolverla tal cual
+    if (response.data && typeof response.data === 'object' && 'success' in response.data) {
+        return response.data;
+    }
+    // Si no, envolver en la estructura esperada
+    return {
+        success: true,
+        message: 'Success',
+        data: response.data
+    };
 }, (error) => {
     if (error.response && error.response.status === 401) {
         localStorage.removeItem('token');
